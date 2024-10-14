@@ -56,6 +56,7 @@ public class BouncyBall : MonoBehaviour
             {
                 ResetBall();
                 lives--;
+                livesImage[lives].SetActive(false);
             }
         }
 
@@ -99,6 +100,7 @@ public class BouncyBall : MonoBehaviour
             wallBounceCount = 0; // Resetear el contador si toca un bloque
 
             score += 10;
+            scoreTxt.text = score.ToString("00000");
         }
         else if (collision.gameObject.CompareTag("Paddle"))
         {
