@@ -11,6 +11,8 @@ public class BouncyBall : MonoBehaviour
     public bool isLaunched = false; // Estado de si la pelota fue lanzada o no
     Rigidbody2D rb;
 
+    public bool constrainInsideScreen = false;
+
     int score = 0;
     int lives = 5;
 
@@ -40,6 +42,16 @@ public class BouncyBall : MonoBehaviour
 
     void Update()
     {
+        if (constrainInsideScreen)
+        {
+            // Mantener la bola dentro de los límites de la pantalla
+            Vector3 position = transform.position;
+            position.x = Mathf.Clamp(position.x, -2.808f, 2.808f); // Ajusta los límites según tu juego
+            position.y = Mathf.Clamp(position.y, -4.997f, 4.997f);
+            transform.position = position;
+        }
+
+
         if (!isLaunched && Input.GetKeyDown(KeyCode.Space))
         {
             LaunchBall(); // Lanza la pelota al presionar espacio
@@ -76,7 +88,7 @@ public class BouncyBall : MonoBehaviour
 
     private void ResetBall()
     {
-        transform.position = new Vector3(0, -3.4f, 0); // Cambiar posición de reaparición a (0, 3.4)
+        transform.position = new Vector3(0, -3.4f, 0); // Cambiar posición de reaparición a (0, -3.4)
         rb.velocity = Vector3.zero;
         rb.isKinematic = true; // Detener movimiento
         isLaunched = false; // Lista para ser lanzada nuevamente
