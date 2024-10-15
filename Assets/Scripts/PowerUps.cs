@@ -44,7 +44,7 @@ public class PowerUp : MonoBehaviour
         switch (powerUpType)
         {
             case PowerUpType.ExtraBalls:
-                SpawnExtraBalls();
+                RegenerateLife();
                 break;
             case PowerUpType.LargerPaddle:
                 if (!isPaddleLarge) // Agrandar el paddle si no está ya agrandado
@@ -65,30 +65,18 @@ public class PowerUp : MonoBehaviour
         // Destruir el power-up después de activarlo
         Destroy(gameObject);
     }
-
-    void SpawnExtraBalls()
+    void RegenerateLife()
     {
-        for (int i = 0; i < 2; i++)
+        // Verificar si el jugador tiene menos de 5 vidas
+        if (ball.lives < 5)
         {
-            // Calcular la posición de spawn ligeramente por encima del paddle
-            Vector3 spawnPosition = paddle.transform.position + new Vector3(0, 0.5f, 0); // Ajusta la altura según sea necesario
-
-            // Instanciar la bola desde la nueva posición
-            GameObject newBall = Instantiate(ball.gameObject, spawnPosition, Quaternion.identity);
-            Rigidbody2D rb = newBall.GetComponent<Rigidbody2D>();
-            newBall.GetComponent<BouncyBall>().isLaunched = true;
-            rb.isKinematic = false;
-
-            // Establecer una velocidad inicial hacia arriba
-            rb.velocity = new Vector2(Random.Range(-2f, 2f), 5f); // Cambia el rango según sea necesario
-
-            // Asignar la capa de las bolas para evitar colisiones entre sí
-            newBall.layer = ballLayer;
-
-            // Asegurarse de que las bolas no salgan de la pantalla
-            newBall.GetComponent<BouncyBall>().constrainInsideScreen = true;
+            ball.lives += 1; // Regenerar una vida
+            ball.livesImage[ball.lives].SetActive(true);
+            Debug.Log("Vida regenerada! Vidas actuales: " + ball.lives);
         }
+
     }
+
 
     // Power-up 2: Paddle más grande por un tiempo, no acumulable en tamaño
     IEnumerator EnlargePaddle()
@@ -97,7 +85,12 @@ public class PowerUp : MonoBehaviour
         enlargeRemainingTime = powerUpDuration; // Iniciar el tiempo de mejora
 
         Vector3 originalScale = paddle.transform.localScale;
-        paddle.transform.localScale = new Vector3(originalScale.x * 1.5f, originalScale.y, originalScale.z);
+
+        if (isPaddleLarge)
+        {
+            paddle.transform.localScale = new Vector3(originalScale.x * 1.5f, originalScale.y, originalScale.z);
+
+        }
 
         while (enlargeRemainingTime > 0)
         {

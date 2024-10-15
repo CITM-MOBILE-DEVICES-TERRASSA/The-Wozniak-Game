@@ -13,8 +13,8 @@ public class BouncyBall : MonoBehaviour
 
     public bool constrainInsideScreen = false;
 
-    int score = 0;
-    int lives = 5;
+    public int score = 0;
+    public int lives = 5;
 
     private int wallBounceCount = 0; // Contador de rebotes en la pared
     public int maxWallBounces = 10; // Rebotes máximos antes de cambiar dirección
