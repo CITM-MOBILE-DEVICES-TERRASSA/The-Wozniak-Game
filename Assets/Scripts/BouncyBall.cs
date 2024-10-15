@@ -116,6 +116,19 @@ public class BouncyBall : MonoBehaviour
                 RedirectToPaddle();
             }
         }
+
+        if (Mathf.Abs(rb.velocity.y) < 0.5f)
+        {
+            // Forzar un ajuste en la velocidad vertical
+            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y + 0.5f * Mathf.Sign(rb.velocity.y == 0 ? 1 : rb.velocity.y));
+        }
+
+        // Comprobar si la velocidad horizontal (X) es demasiado baja (rebote completamente vertical)
+        if (Mathf.Abs(rb.velocity.x) < 0.5f)
+        {
+            // Forzar un ajuste en la velocidad horizontal
+            rb.velocity = new Vector2(rb.velocity.x + 0.5f * Mathf.Sign(rb.velocity.x == 0 ? 1 : rb.velocity.x), rb.velocity.y);
+        }
     }
 
     private void RedirectToPaddle()
