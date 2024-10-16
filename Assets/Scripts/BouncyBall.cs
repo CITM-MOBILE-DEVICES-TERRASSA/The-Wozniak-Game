@@ -14,7 +14,7 @@ public class BouncyBall : MonoBehaviour
     public bool constrainInsideScreen = false;
 
     public int score = 0;
-    public int lives = 5;
+    public int lives = 3;
 
     private int wallBounceCount = 0; // Contador de rebotes en la pared
     public int maxWallBounces = 10; // Rebotes máximos antes de cambiar dirección
@@ -27,6 +27,9 @@ public class BouncyBall : MonoBehaviour
     // Nueva variable para el paddle
     public PlayerMovement paddle; // Asigna esto en el Inspector o busca en Start()
 
+    public int maxScore = 0;  // Variable para almacenar la puntuación máxima
+    public TextMeshProUGUI maxScoreTxt; // Text para mostrar la puntuación máxima
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -38,6 +41,12 @@ public class BouncyBall : MonoBehaviour
         {
             paddle = GameObject.FindObjectOfType<PlayerMovement>();
         }
+
+        // Cargar la puntuación máxima guardada
+        maxScore = PlayerPrefs.GetInt("00000", 0);
+
+        // Actualizar la puntuación máxima en la pantalla
+        maxScoreTxt.text = maxScore.ToString("00000");
     }
 
     void Update()
@@ -113,6 +122,16 @@ public class BouncyBall : MonoBehaviour
 
             score += 10;
             scoreTxt.text = score.ToString("00000");
+
+            if (score > maxScore)
+            {
+                maxScore = score;
+                maxScoreTxt.text = maxScore.ToString("00000");
+
+                // Guardar la nueva puntuación máxima
+                PlayerPrefs.SetInt("00000", maxScore);
+                PlayerPrefs.Save();  // Guardar los datos
+            }
         }
         else if (collision.gameObject.CompareTag("Paddle"))
         {
@@ -129,6 +148,19 @@ public class BouncyBall : MonoBehaviour
             }
         }
 
+
+
+        // Aumentar la velocidad de la pelota después de cada rebote
+        float speedIncreaseFactor = 1.05f; // Incremento del 5% en cada colisión
+        rb.velocity *= speedIncreaseFactor;
+
+        // Limitar la velocidad máxima
+        if (rb.velocity.magnitude > maxVelocity)
+        {
+            rb.velocity = rb.velocity.normalized * maxVelocity; // Normalizar y mantener la velocidad máxima
+        }
+
+        // Comprobar si la velocidad vertical (Y) es demasiado baja (rebote lateral)
         if (Mathf.Abs(rb.velocity.y) < 0.5f)
         {
             // Forzar un ajuste en la velocidad vertical
@@ -157,6 +189,10 @@ public class BouncyBall : MonoBehaviour
     {
         gameOverPanel.SetActive(true);
         Time.timeScale = 0;
-        Destroy(gameObject);
+        GameObject[] powerUps = GameObject.FindGameObjectsWithTag("PowerUp");
+        foreach (GameObject powerUp in powerUps)
+        {
+                Destroy(powerUp);
+        }
     }
 }

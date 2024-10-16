@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -2667467787263381194}
   m_Layer: 0
   m_Name: LargerPaddle
-  m_TagString: Untagged
+  m_TagString: PowerUp
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -137,6 +137,9 @@ MonoBehaviour:
   powerUpType: 1
   fallSpeed: 2
   powerUpDuration: 10
+  ballLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!50 &-2667467787263381194
 Rigidbody2D:
   serializedVersion: 4

@@ -68,7 +68,7 @@ public class PowerUp : MonoBehaviour
     void RegenerateLife()
     {
         // Verificar si el jugador tiene menos de 5 vidas
-        if (ball.lives < 5)
+        if (ball.lives < 3)
         {
             ball.lives += 1; // Regenerar una vida
             ball.livesImage[ball.lives].SetActive(true);
@@ -107,6 +107,6 @@ public class PowerUp : MonoBehaviour
     void SpeedUpBall()
     {
         Rigidbody2D rb = ball.GetComponent<Rigidbody2D>();
-        rb.velocity = rb.velocity * 1.5f; // Incrementar la velocidad de la pelota en un 50%
+        rb.velocity = rb.velocity * 0.5f; // Incrementar la velocidad de la pelota en un 50%
     }
 }
