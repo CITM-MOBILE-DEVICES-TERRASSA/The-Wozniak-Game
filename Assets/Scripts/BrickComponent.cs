@@ -33,7 +33,7 @@ public class BlockComponent : MonoBehaviour
     private void ChangeColor()
     {
         // Calcular el nuevo porcentaje de blanco en función del número de golpes
-        float whitePercentage = Mathf.Clamp(currentHits * 0.1f, 0f, 1f); // Aumentar el componente blanco hasta un máximo del 100%
+        float whitePercentage = Mathf.Clamp(currentHits * 0.2f, 0f, 1f); // Aumentar el componente blanco hasta un máximo del 100%
 
         // Cambiar el color usando Lerp
         Color targetColor = Color.white; // Color blanco
