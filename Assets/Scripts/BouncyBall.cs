@@ -78,13 +78,36 @@ public class BouncyBall : MonoBehaviour
                 ResetBall();
                 lives--;
                 livesImage[lives].SetActive(false);
+
+                if (lives >= 0) // Verifica que aún haya vidas disponibles
+                {
+                    livesImage[lives].SetActive(false);
+                }
+
+                if (lives <= 0)
+                {
+                    GameOver(); // Llamar a GameOver si acabas de perder la última vida
+                }
+                else
+                {
+                    ResetBall(); // Si aún tienes vidas, restablecer la pelota
+                }
             }
+
+
         }
 
         // Limitar la velocidad máxima
         if (rb.velocity.magnitude > maxVelocity)
         {
             rb.velocity = Vector3.ClampMagnitude(rb.velocity, maxVelocity);
+        }
+
+        if (GameObject.FindGameObjectsWithTag("Brick").Length == 0)
+        {
+            ResetBall();
+            LevelGenerator levelGenerator = FindObjectOfType<LevelGenerator>();
+            levelGenerator.LevelCompleted(); // Avanzar al siguiente nivel
         }
     }
 
@@ -95,29 +118,20 @@ public class BouncyBall : MonoBehaviour
         isLaunched = true; // Marcar como lanzada
     }
 
-    private void ResetBall()
+    public void ResetBall()
     {
-        transform.position = new Vector3(0, -3.4f, 0); // Cambiar posición de reaparición a (0, -3.4)
+        transform.position = new Vector3(0, -3.4f, 0);
         rb.velocity = Vector3.zero;
-        rb.isKinematic = true; // Detener movimiento
-        isLaunched = false; // Lista para ser lanzada nuevamente
+        rb.isKinematic = true;
+        isLaunched = false;
 
-        // Llamar al método ResetPosition() del paddle si existe
-        if (paddle != null)
-        {
-            paddle.ResetPosition();
-        }
-        else
-        {
-            Debug.LogError("Paddle no está asignado o no se encuentra en la escena.");
-        }
+        paddle.ResetPosition();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Brick"))
         {
-            Destroy(collision.gameObject);
             wallBounceCount = 0; // Resetear el contador si toca un bloque
 
             score += 10;
@@ -187,12 +201,8 @@ public class BouncyBall : MonoBehaviour
 
     void GameOver()
     {
+        ResetBall();
         gameOverPanel.SetActive(true);
         Time.timeScale = 0;
-        GameObject[] powerUps = GameObject.FindGameObjectsWithTag("PowerUp");
-        foreach (GameObject powerUp in powerUps)
-        {
-                Destroy(powerUp);
-        }
     }
 }

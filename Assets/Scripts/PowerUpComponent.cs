@@ -2,14 +2,26 @@ using UnityEngine;
 
 public class PowerUpComponent : MonoBehaviour
 {
-    public GameObject powerUpPrefab; // El prefab del power-up
+    public GameObject powerUpPrefab;
+
+    private bool isLevelResetting = false;
 
     private void OnDestroy()
     {
-        // Cuando el bloque se destruye, genera el power-up
-        if (powerUpPrefab != null)
+        if (isLevelResetting)
+            return;
+
+        Debug.Log(gameObject.name + " ha sido destruido.");
+
+        if (powerUpPrefab != null && !isLevelResetting)
         {
-            Instantiate(powerUpPrefab, transform.position, Quaternion.identity);
+            GameObject powerUp = Instantiate(powerUpPrefab, transform.position, Quaternion.identity);
+            powerUp.tag = "PowerUp";
         }
+    }
+
+    public void SetLevelResetting(bool resetting)
+    {
+        isLevelResetting = resetting;
     }
 }

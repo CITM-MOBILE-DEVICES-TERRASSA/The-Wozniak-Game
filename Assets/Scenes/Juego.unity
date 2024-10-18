@@ -576,7 +576,7 @@ GameObject:
   - component: {fileID: 275647225}
   m_Layer: 0
   m_Name: BouncyBall
-  m_TagString: Untagged
+  m_TagString: Ball
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1111,7 +1111,7 @@ MonoBehaviour:
       colorBlindnessStrength: 1
   m_Resources: {fileID: 11400000, guid: d82512f9c8e5d4a4d938b575d47f88d4, type: 2}
   m_ShowToolkit: 0
-  m_ShowCustomSorter: 0
+  m_ShowCustomSorter: 1
   breakBeforeColorGrading: 0
   m_BeforeTransparentBundles: []
   m_BeforeStackBundles: []
@@ -1231,7 +1231,7 @@ MonoBehaviour:
   m_ScaleFactor: 2.12
   m_ReferenceResolution: {x: 1080, y: 1920}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -1256,7 +1256,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
   m_AdditionalShaderChannelsFlag: -1
-  m_UpdateRectTransformForStandalone: 1
+  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -1466,7 +1466,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -438.4431, y: 0, z: -441.44165, w: -2.222671}
+  m_margin: {x: -2.0818481, y: 0, z: 4.2038574, w: -2.222671}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -2361,6 +2361,7 @@ MonoBehaviour:
   - {fileID: 5336486870863502755, guid: 7e64c024c9b9c7f4297b62c93815fb6d, type: 3}
   - {fileID: 5258828278612754966, guid: 2047e1f0a48167143acffe05babc043f, type: 3}
   - {fileID: 3028051734015849389, guid: 26cbe0ce40ce97e47b13266011bc10e2, type: 3}
+  blockHitsRequired: 1
 --- !u!4 &2016243051
 Transform:
   m_ObjectHideFlags: 0
@@ -2691,8 +2692,8 @@ SceneRoots:
   - {fileID: 2016243051}
   - {fileID: 475239759}
   - {fileID: 1601964691}
-  - {fileID: 2043754160}
   - {fileID: 644011149}
+  - {fileID: 2043754160}
   - {fileID: 973215445}
   - {fileID: 25638231}
   - {fileID: 606789454}

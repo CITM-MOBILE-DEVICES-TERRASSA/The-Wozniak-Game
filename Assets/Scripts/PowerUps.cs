@@ -47,13 +47,12 @@ public class PowerUp : MonoBehaviour
                 RegenerateLife();
                 break;
             case PowerUpType.LargerPaddle:
-                if (!isPaddleLarge) // Agrandar el paddle si no está ya agrandado
+                if (!isPaddleLarge)
                 {
                     StartCoroutine(EnlargePaddle());
                 }
                 else
                 {
-                    // Si ya está agrandado, acumular el tiempo
                     enlargeRemainingTime += powerUpDuration;
                 }
                 break;
@@ -62,34 +61,31 @@ public class PowerUp : MonoBehaviour
                 break;
         }
 
-        // Destruir el power-up después de activarlo
         Destroy(gameObject);
     }
     void RegenerateLife()
     {
-        // Verificar si el jugador tiene menos de 5 vidas
         if (ball.lives < 3)
         {
-            ball.lives += 1; // Regenerar una vida
-            ball.livesImage[ball.lives].SetActive(true);
+            ball.lives += 1;
+            ball.livesImage[ball.lives-1].SetActive(true);
             Debug.Log("Vida regenerada! Vidas actuales: " + ball.lives);
         }
 
+
+
     }
 
-
-    // Power-up 2: Paddle más grande por un tiempo, no acumulable en tamaño
     IEnumerator EnlargePaddle()
     {
         isPaddleLarge = true;
-        enlargeRemainingTime = powerUpDuration; // Iniciar el tiempo de mejora
+        enlargeRemainingTime = powerUpDuration;
 
         Vector3 originalScale = paddle.transform.localScale;
 
         if (isPaddleLarge)
         {
-            paddle.transform.localScale = new Vector3(originalScale.x * 1.5f, originalScale.y, originalScale.z);
-
+            paddle.transform.localScale = new Vector3(originalScale.x + 2, originalScale.y, originalScale.z);
         }
 
         while (enlargeRemainingTime > 0)
@@ -98,15 +94,13 @@ public class PowerUp : MonoBehaviour
             yield return null;
         }
 
-        // Después de que el tiempo de la mejora se agote, volver al tamaño normal
         paddle.transform.localScale = originalScale;
         isPaddleLarge = false;
     }
 
-    // Power-up 3: Aumentar la velocidad de la pelota
     void SpeedUpBall()
     {
         Rigidbody2D rb = ball.GetComponent<Rigidbody2D>();
-        rb.velocity = rb.velocity * 0.5f; // Incrementar la velocidad de la pelota en un 50%
+        rb.velocity = rb.velocity * 0.5f;
     }
 }

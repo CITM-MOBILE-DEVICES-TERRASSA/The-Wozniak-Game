@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,10 +8,17 @@ public class LevelGenerator : MonoBehaviour
     public Vector2 offset;
     public GameObject brickPrefab;
     public Gradient gradient;
-    private List<GameObject> activePowerUps = new List<GameObject>(); // Lista para almacenar los power-ups activos
-    public GameObject[] powerUpPrefabs; // Prefabs de power-ups que puedes asignar en el inspector
+    private List<GameObject> activePowerUps = new List<GameObject>();
+    public GameObject[] powerUpPrefabs;
+
+    public int blockHitsRequired = 1;
 
     private void Awake()
+    {
+        GenerateLevel();
+    }
+
+    public void GenerateLevel()
     {
         for (int i = 0; i < size.x; i++)
         {
@@ -22,18 +28,14 @@ public class LevelGenerator : MonoBehaviour
                 newBrick.transform.position = transform.position + new Vector3((float)((size.x - 1) * .5f - i) * offset.x, j * offset.y, 0);
                 newBrick.GetComponent<SpriteRenderer>().color = gradient.Evaluate((float)j / (size.y - 1));
 
-                // Si el bloque tiene un power-up, guárdalo en la lista para destruirlo más tarde si es necesario
-                PowerUpComponent powerUpComponent = newBrick.GetComponent<PowerUpComponent>();
-                if (powerUpComponent != null && powerUpComponent.powerUpPrefab != null)
-                {
-                    activePowerUps.Add(powerUpComponent.powerUpPrefab);
-                }
+                BlockComponent blockComponent = newBrick.AddComponent<BlockComponent>();
+                blockComponent.hitsToBreak = blockHitsRequired; // Asegúrate de que el valor se esté estableciendo correctamente
+                Debug.Log($"Bloque creado en {i}, {j} con {blockHitsRequired} golpes requeridos."); // Mensaje de depuración
 
-                // Probabilidad del 20% de añadir un power-up
+                // Generar un power-up aleatorio con un 20% de probabilidad
                 float randomChance = Random.Range(0f, 1f);
                 if (randomChance <= 0.2f && powerUpPrefabs.Length > 0)
                 {
-                    // Seleccionar un power-up aleatorio
                     GameObject powerUp = powerUpPrefabs[Random.Range(0, powerUpPrefabs.Length)];
                     newBrick.AddComponent<PowerUpComponent>().powerUpPrefab = powerUp;
                 }
@@ -41,25 +43,48 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-    void Start()
+    public void LevelCompleted()
     {
+
+        blockHitsRequired++;
+        ClearLevel();
+
+        DestroyAllPowerUps();
+
+        GenerateLevel();
     }
 
-    void Update()
+    private void ClearLevel()
     {
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject); // Eliminar todos los bloques del nivel actual
+        }
     }
 
     public void Restart()
     {
-        foreach (GameObject powerUp in activePowerUps)
+        PowerUpComponent[] powerUpComponents = FindObjectsOfType<PowerUpComponent>();
+        foreach (var component in powerUpComponents)
         {
-            if (powerUp != null)
-            {
-                Destroy(powerUp);
-            }
+            component.SetLevelResetting(true);
         }
+
+
+        DestroyAllPowerUps();
 
         Time.timeScale = 1;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+
+    private void DestroyAllPowerUps()
+    {
+        GameObject[] activePowerUps = GameObject.FindGameObjectsWithTag("PowerUp");
+        foreach (GameObject powerUp in activePowerUps)
+        {
+            Destroy(powerUp);
+        }
+        Debug.Log("Todos los Power-ups han sido destruidos.");  
+    }
 }
+
