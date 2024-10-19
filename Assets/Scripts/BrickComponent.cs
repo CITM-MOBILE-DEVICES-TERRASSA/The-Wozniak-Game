@@ -1,14 +1,16 @@
+using TMPro;
 using UnityEngine;
+using System.Collections;
 
 public class BlockComponent : MonoBehaviour
 {
-    public int hitsToBreak = 1; // Golpes necesarios para romper el bloque
-    private int currentHits = 0; // Contador de golpes recibidos
-    private SpriteRenderer spriteRenderer; // Referencia al SpriteRenderer del bloque
+    public int hitsToBreak = 1;
+    private int currentHits = 0;
+    private SpriteRenderer spriteRenderer;
+    public GameObject scoreTextPrefab;
 
     private void Start()
     {
-        // Obtener el SpriteRenderer en el Start
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
@@ -16,29 +18,89 @@ public class BlockComponent : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ball"))
         {
-            currentHits++; // Aumentar el contador de golpes
-            Debug.Log($"Golpes recibidos: {currentHits}/{hitsToBreak} para el bloque {gameObject.name}");
+            // Obtener el componente BouncyBall de la pelota
+            BouncyBall bouncyBall = collision.gameObject.GetComponent<BouncyBall>();
 
-            // Cambiar el color del bloque
-            ChangeColor();
-
-            if (currentHits >= hitsToBreak) // Verificar si se alcanzó el número de golpes necesarios
+            if (bouncyBall != null)
             {
-                Destroy(gameObject); // Destruir el bloque
-                Debug.Log($"Bloque {gameObject.name} destruido después de {currentHits} golpes.");
+                currentHits++;
+                Debug.Log($"Golpes recibidos: {currentHits}/{hitsToBreak} para el bloque {gameObject.name}");
+
+                ChangeColor();
+
+                if (currentHits >= hitsToBreak)
+                {
+                    // Obtener la puntuación acumulada del componente BouncyBall
+                    int scoreToDisplay = bouncyBall.hasHitPaddleOrLost ? bouncyBall.baseScore : bouncyBall.additionalScoreAccumulated;
+
+                    // Mostrar el texto de la puntuación sobre el bloque destruido
+                    ShowScoreText(scoreToDisplay);
+
+                    Debug.Log($"Bloque {gameObject.name} destruido después de {currentHits} golpes.");
+                    Destroy(gameObject);
+                }
             }
         }
     }
 
     private void ChangeColor()
     {
-        // Calcular el nuevo porcentaje de blanco en función del número de golpes
-        float whitePercentage = Mathf.Clamp(currentHits * 0.2f, 0f, 1f); // Aumentar el componente blanco hasta un máximo del 100%
+        float whitePercentage = Mathf.Clamp(currentHits * 0.2f, 0f, 1f);
 
-        // Cambiar el color usando Lerp
-        Color targetColor = Color.white; // Color blanco
-        Color newColor = Color.Lerp(spriteRenderer.color, targetColor, whitePercentage); // Interpolar hacia el color blanco
+        Color targetColor = Color.white;
+        Color newColor = Color.Lerp(spriteRenderer.color, targetColor, whitePercentage);
 
-        spriteRenderer.color = newColor; // Aplicar el nuevo color
+        spriteRenderer.color = newColor;
+    }
+
+    public int blockScore = 10;
+
+    public void ShowScoreText(int scoreToDisplay)
+    {
+        Debug.Log("Mostrando texto de puntuación.");
+
+        Canvas canvas = FindObjectOfType<Canvas>();
+        GameObject scoreText = Instantiate(scoreTextPrefab, canvas.transform);
+        Vector3 screenPosition = Camera.main.WorldToScreenPoint(transform.position);
+        RectTransform rectTransform = scoreText.GetComponent<RectTransform>();
+
+        Vector2 localPoint;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvas.GetComponent<RectTransform>(),
+            screenPosition,
+            canvas.worldCamera,
+            out localPoint
+        );
+
+        rectTransform.localPosition = localPoint;
+        rectTransform.anchoredPosition += new Vector2(0, 30f);
+
+        TextMeshProUGUI textMesh = scoreText.GetComponent<TextMeshProUGUI>();
+        textMesh.text = scoreToDisplay.ToString();
+
+        StartCoroutine(FadeOutText(scoreText));
+    }
+
+    private IEnumerator FadeOutText(GameObject textObject)
+    {
+        TextMeshProUGUI textMesh = textObject.GetComponent<TextMeshProUGUI>();
+        Color originalColor = textMesh.color;
+
+        Debug.Log("Iniciando fade out para: " + textObject.name);
+
+        yield return new WaitForSeconds(0.5f); // Esperar medio segundo
+
+        float fadeDuration = 1f;
+        float elapsed = 0f;
+
+        while (elapsed < fadeDuration)
+        {
+            float alpha = Mathf.Lerp(originalColor.a, 0f, elapsed / fadeDuration);
+            textMesh.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        Destroy(textObject);
     }
 }

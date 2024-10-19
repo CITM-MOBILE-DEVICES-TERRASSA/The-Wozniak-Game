@@ -30,6 +30,12 @@ public class BouncyBall : MonoBehaviour
     public int maxScore = 0;  // Variable para almacenar la puntuación máxima
     public TextMeshProUGUI maxScoreTxt; // Text para mostrar la puntuación máxima
 
+    // Nuevas variables para la puntuación
+    public int baseScore = 10;  // Puntuación base por el primer bloque
+    public int additionalScore = 5; // Puntos adicionales por bloques consecutivos
+    public int additionalScoreAccumulated = 0; // Puntos acumulados por bloques destruidos
+    public bool hasHitPaddleOrLost = true; // Para controlar si la bola ha vuelto al paddle o ha perdido
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -59,7 +65,6 @@ public class BouncyBall : MonoBehaviour
             position.y = Mathf.Clamp(position.y, -4.997f, 4.997f);
             transform.position = position;
         }
-
 
         if (!isLaunched && Input.GetKeyDown(KeyCode.Space))
         {
@@ -93,8 +98,6 @@ public class BouncyBall : MonoBehaviour
                     ResetBall(); // Si aún tienes vidas, restablecer la pelota
                 }
             }
-
-
         }
 
         // Limitar la velocidad máxima
@@ -111,7 +114,7 @@ public class BouncyBall : MonoBehaviour
         }
     }
 
-    private void LaunchBall()
+    public void LaunchBall()
     {
         rb.isKinematic = false; // Habilitar la física de la pelota
         rb.AddForce(Vector2.up * launchForce, ForceMode2D.Impulse); // Lanzar hacia arriba con una fuerza
@@ -126,16 +129,39 @@ public class BouncyBall : MonoBehaviour
         isLaunched = false;
 
         paddle.ResetPosition();
+
+        // Resetear la lógica de puntuación
+        additionalScoreAccumulated = 0; // Reseteamos la puntuación acumulada
+        hasHitPaddleOrLost = true; // Marcamos que la bola ha vuelto al paddle o ha perdido
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    public void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Brick"))
         {
-            wallBounceCount = 0; // Resetear el contador si toca un bloque
+            wallBounceCount = 0;
 
-            score += 10;
+            int puntosBloque = hasHitPaddleOrLost ? baseScore : additionalScoreAccumulated;
+            BlockComponent blockComponent = collision.gameObject.GetComponent<BlockComponent>();
+
+            if (hasHitPaddleOrLost)
+            {
+                score += baseScore; // Sumar 10 puntos por el primer bloque
+                additionalScoreAccumulated = baseScore; // Iniciar la acumulación desde la base
+                puntosBloque = baseScore; // Puntos a mostrar
+            }
+            else
+            {
+                additionalScoreAccumulated += additionalScore; // Sumar 5 puntos adicionales
+                score += additionalScoreAccumulated; // Sumar al score la puntuación acumulada
+                puntosBloque = additionalScoreAccumulated; // Puntos a mostrar
+            }
+
+            hasHitPaddleOrLost = false; // Marcamos que la bola ha golpeado un bloque
+
             scoreTxt.text = score.ToString("00000");
+            Debug.Log("Puntos bloque "+ score);
+            blockComponent.ShowScoreText(puntosBloque);
 
             if (score > maxScore)
             {
@@ -147,10 +173,11 @@ public class BouncyBall : MonoBehaviour
                 PlayerPrefs.Save();  // Guardar los datos
             }
         }
-        else if (collision.gameObject.CompareTag("Paddle"))
-        {
-            wallBounceCount = 0; // Resetear el contador si toca el paddle
-        }
+    else if (collision.gameObject.CompareTag("Paddle"))
+    {
+        wallBounceCount = 0; // Resetear el contador si toca el paddle
+        hasHitPaddleOrLost = true; // La bola ha vuelto al paddle
+    }
         else if (collision.gameObject.CompareTag("Wall"))
         {
             wallBounceCount++; // Incrementar el contador si toca la pared
@@ -161,8 +188,6 @@ public class BouncyBall : MonoBehaviour
                 RedirectToPaddle();
             }
         }
-
-
 
         // Aumentar la velocidad de la pelota después de cada rebote
         float speedIncreaseFactor = 1.05f; // Incremento del 5% en cada colisión
@@ -189,7 +214,7 @@ public class BouncyBall : MonoBehaviour
         }
     }
 
-    private void RedirectToPaddle()
+    public void RedirectToPaddle()
     {
         // Calcular la dirección hacia el paddle
         Vector2 directionToPaddle = (paddle.transform.position - transform.position).normalized;
