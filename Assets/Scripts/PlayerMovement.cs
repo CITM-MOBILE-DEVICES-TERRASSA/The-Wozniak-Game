@@ -6,7 +6,7 @@ public class PlayerMovement : MonoBehaviour
 {
     public float speed = 5;
     public float maxX = 7.5f;
-
+    bool automaticGameplay = false;
     private float movementHorizontal;
 
     // Referencia al script de la pelota
@@ -23,22 +23,64 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        // Solo permite mover el paddle si la pelota ha sido lanzada
         if (ball != null && ball.isLaunched)
         {
             movementHorizontal = Input.GetAxis("Horizontal");
 
-            // Restringir el movimiento del paddle dentro de los límites
-            if ((movementHorizontal > 0 && transform.position.x < maxX) || (movementHorizontal < 0 && transform.position.x > -maxX))
+            if (!automaticGameplay)
             {
+                if ((movementHorizontal > 0 && transform.position.x < maxX) || (movementHorizontal < 0 && transform.position.x > -maxX))
+                {
                 transform.position += Vector3.right * movementHorizontal * speed * Time.deltaTime;
+                }
+
+                Vector3 targetPosition = transform.position;
+
+                if (Input.GetMouseButton(0))
+                {
+                    Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    mousePosition.z = 0;
+
+                    if (mousePosition.x < maxX && mousePosition.x > -maxX)
+                    {
+                        targetPosition.x = mousePosition.x;
+                    }
+                }
+
+                if (Input.touchCount > 0)
+                {
+                    Touch touch = Input.GetTouch(0);
+                    if (touch.phase == TouchPhase.Moved)
+                    {
+                        Vector3 touchPosition = Camera.main.ScreenToWorldPoint(touch.position);
+                        touchPosition.z = 0;
+
+                        if (touchPosition.x < maxX && touchPosition.x > -maxX)
+                        {
+                            transform.position = new Vector3(touchPosition.x, transform.position.y, transform.position.z);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                AutomaticGameplay();
             }
         }
     }
 
-    // Método para resetear la posición del paddle
+    public void AutomaticGameplay()
+    {
+        transform.position = new Vector3(ball.transform.position.x,-3.8f, 0);
+    }
+
+    public void ToggleAutomaticGameplay()
+    {
+        automaticGameplay = !automaticGameplay;
+    }
+
     public void ResetPosition()
     {
-        transform.position = new Vector3(0, -3.8f, 0); // Coloca el paddle en la posición inicial
+        transform.position = new Vector3(0, -3.8f, 0);
     }
 }

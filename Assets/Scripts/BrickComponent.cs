@@ -5,7 +5,7 @@ using System.Collections;
 public class BlockComponent : MonoBehaviour
 {
     public int hitsToBreak = 1;
-    private int currentHits = 0;
+    public int currentHits = 0;
     private SpriteRenderer spriteRenderer;
     public GameObject scoreTextPrefab;
 
@@ -57,28 +57,35 @@ public class BlockComponent : MonoBehaviour
 
     public void ShowScoreText(int scoreToDisplay)
     {
-        Debug.Log("Mostrando texto de puntuación.");
+        if (scoreTextPrefab == null)
+        {
+            Debug.LogWarning("El prefab de texto de puntuación no está asignado.");
+        }
+        else
+        {
+            Debug.Log("Mostrando texto de puntuación.");
 
-        Canvas canvas = FindObjectOfType<Canvas>();
-        GameObject scoreText = Instantiate(scoreTextPrefab, canvas.transform);
-        Vector3 screenPosition = Camera.main.WorldToScreenPoint(transform.position);
-        RectTransform rectTransform = scoreText.GetComponent<RectTransform>();
+            Canvas canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
+            GameObject scoreText = Instantiate(scoreTextPrefab, canvas.transform);
+            Vector3 screenPosition = Camera.main.WorldToScreenPoint(transform.position);
+            RectTransform rectTransform = scoreText.GetComponent<RectTransform>();
 
-        Vector2 localPoint;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            canvas.GetComponent<RectTransform>(),
-            screenPosition,
-            canvas.worldCamera,
-            out localPoint
-        );
+            Vector2 localPoint;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                canvas.GetComponent<RectTransform>(),
+                screenPosition,
+                canvas.worldCamera,
+                out localPoint
+            );
 
-        rectTransform.localPosition = localPoint;
-        rectTransform.anchoredPosition += new Vector2(0, 30f);
+            rectTransform.localPosition = localPoint;
+            rectTransform.anchoredPosition += new Vector2(0, 30f);
 
-        TextMeshProUGUI textMesh = scoreText.GetComponent<TextMeshProUGUI>();
-        textMesh.text = scoreToDisplay.ToString();
+            TextMeshProUGUI textMesh = scoreText.GetComponent<TextMeshProUGUI>();
+            textMesh.text = scoreToDisplay.ToString();
 
-        StartCoroutine(FadeOutText(scoreText));
+            StartCoroutine(FadeOutText(scoreText));
+        }
     }
 
     private IEnumerator FadeOutText(GameObject textObject)

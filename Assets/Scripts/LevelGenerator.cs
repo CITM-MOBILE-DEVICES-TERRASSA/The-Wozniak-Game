@@ -32,7 +32,6 @@ public class LevelGenerator : MonoBehaviour
                 blockComponent.hitsToBreak = blockHitsRequired; // Asegúrate de que el valor se esté estableciendo correctamente
                 Debug.Log($"Bloque creado en {i}, {j} con {blockHitsRequired} golpes requeridos."); // Mensaje de depuración
 
-                // Generar un power-up aleatorio con un 20% de probabilidad
                 float randomChance = Random.Range(0f, 1f);
                 if (randomChance <= 0.2f && powerUpPrefabs.Length > 0)
                 {
@@ -77,7 +76,7 @@ public class LevelGenerator : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    private void DestroyAllPowerUps()
+    public void DestroyAllPowerUps()
     {
         GameObject[] activePowerUps = GameObject.FindGameObjectsWithTag("PowerUp");
         foreach (GameObject powerUp in activePowerUps)
@@ -87,4 +86,3 @@ public class LevelGenerator : MonoBehaviour
         Debug.Log("Todos los Power-ups han sido destruidos.");  
     }
 }
-

@@ -10,6 +10,7 @@ public class PauseManager : MonoBehaviour
     public GameObject UI;
 
     public Button Ajustes;
+    public Button Automatic;
 
     public TrailRenderer ballTrailRenderer;
     public GameObject BouncyBall;
@@ -18,6 +19,11 @@ public class PauseManager : MonoBehaviour
     public TextMeshProUGUI countdownText;
     private bool isPaused = false;
     private float countdownTime = 3f;
+
+    GameObject ball;
+    GameObject paddle;
+
+    public PlayerMovement playerMovement;
 
     void Start()
     {
@@ -37,6 +43,16 @@ public class PauseManager : MonoBehaviour
             ballTrailRenderer.enabled = false;
 
             Ajustes.gameObject.SetActive(false);
+            Automatic.gameObject.SetActive(false);
+        }
+    }
+
+    public void AutomaticGameplay()
+    {
+        if (playerMovement != null)
+        {
+            playerMovement.ToggleAutomaticGameplay();
+            Debug.Log("Automatic gameplay toggled: ");
         }
     }
 
@@ -45,6 +61,7 @@ public class PauseManager : MonoBehaviour
         settingsMenuUI.SetActive(false);
         UI.SetActive(true);
 
+        Automatic.gameObject.SetActive(true);
         Ajustes.gameObject.SetActive(true);
         BouncyBall.GetComponent<SpriteRenderer>().enabled = true;
         ballTrailRenderer.enabled = true;
@@ -72,5 +89,12 @@ public class PauseManager : MonoBehaviour
     {
         isPaused = false;
         Time.timeScale = 1;
+    }
+
+    public void ExitToMainMenu()
+    {
+        LevelGenerator levelGenerator = FindObjectOfType<LevelGenerator>();
+        levelGenerator.DestroyAllPowerUps();
+        SceneManager.LoadScene("Main Menu");
     }
 }
