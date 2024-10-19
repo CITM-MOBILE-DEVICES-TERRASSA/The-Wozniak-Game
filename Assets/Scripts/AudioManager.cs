@@ -27,7 +27,7 @@ public class AudioManager : MonoBehaviour
                 audioSource.PlayOneShot(soundClips[1]);
                 break;
             case SoundType.GameOver:
-                audioSource.PlayOneShot(soundClips[0]);
+                audioSource.PlayOneShot(soundClips[2]);
                 break;
                 // Maneja otros sonidos aquí
         }
