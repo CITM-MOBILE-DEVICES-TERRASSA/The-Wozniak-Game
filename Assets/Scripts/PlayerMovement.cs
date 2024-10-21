@@ -9,12 +9,10 @@ public class PlayerMovement : MonoBehaviour
     bool automaticGameplay = false;
     private float movementHorizontal;
 
-    // Referencia al script de la pelota
     public BouncyBall ball;
 
     void Start()
     {
-        // Si la pelota no está asignada en el Inspector, intenta encontrarla automáticamente
         if (ball == null)
         {
             ball = GameObject.FindObjectOfType<BouncyBall>();

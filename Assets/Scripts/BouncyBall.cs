@@ -8,7 +8,10 @@ public class BouncyBall : MonoBehaviour
     public float minY = -5.5f;
     public float maxVelocity = 15f;
     public float launchForce = 10f;
+
     public bool isLaunched = false;
+    public bool isKinematic = true;
+
     Rigidbody2D rb;
 
     public bool constrainInsideScreen = false;
@@ -21,6 +24,7 @@ public class BouncyBall : MonoBehaviour
     public TextMeshProUGUI scoreTxt;
     public GameObject[] livesImage;
     public GameObject gameOverPanel;
+    public GameObject youWinPanel;
     public PlayerMovement paddle;
     public int maxScore = 0;
     public TextMeshProUGUI maxScoreTxt;
@@ -68,7 +72,7 @@ public class BouncyBall : MonoBehaviour
         if (!isLaunched && Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
-            if (touch.phase == TouchPhase.Began) // Verifica si el toque ha comenzado
+            if (touch.phase == TouchPhase.Began)
             {
                 LaunchBall();
             }
@@ -109,9 +113,10 @@ public class BouncyBall : MonoBehaviour
 
         if (GameObject.FindGameObjectsWithTag("Brick").Length == 0)
         {
+            audioManager.PlaySound(AudioManager.SoundType.GameOver);
             ResetBall();
-            LevelGenerator levelGenerator = FindObjectOfType<LevelGenerator>();
-            levelGenerator.LevelCompleted();
+            youWinPanel.SetActive(true);
+            Time.timeScale = 0;
         }
     }
 

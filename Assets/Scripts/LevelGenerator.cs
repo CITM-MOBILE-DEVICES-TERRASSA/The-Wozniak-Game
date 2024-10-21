@@ -11,10 +11,13 @@ public class LevelGenerator : MonoBehaviour
     private List<GameObject> activePowerUps = new List<GameObject>();
     public GameObject[] powerUpPrefabs;
 
+    public GameObject victoryPanel;
+
     public int blockHitsRequired = 1;
 
     private void Awake()
     {
+
         GenerateLevel();
     }
 
@@ -29,8 +32,11 @@ public class LevelGenerator : MonoBehaviour
                 newBrick.GetComponent<SpriteRenderer>().color = gradient.Evaluate((float)j / (size.y - 1));
 
                 BlockComponent blockComponent = newBrick.AddComponent<BlockComponent>();
-                blockComponent.hitsToBreak = blockHitsRequired; // Asegúrate de que el valor se esté estableciendo correctamente
-                Debug.Log($"Bloque creado en {i}, {j} con {blockHitsRequired} golpes requeridos."); // Mensaje de depuración
+                blockComponent.hitsToBreak = blockHitsRequired;
+                
+
+
+                Debug.Log($"Bloque creado en {i}, {j} con {blockHitsRequired} golpes requeridos.");
 
                 float randomChance = Random.Range(0f, 1f);
                 if (randomChance <= 0.2f && powerUpPrefabs.Length > 0)
@@ -40,10 +46,23 @@ public class LevelGenerator : MonoBehaviour
                 }
             }
         }
+
+        BouncyBall bouncyBall = FindObjectOfType<BouncyBall>();
+        if (bouncyBall != null)
+        {
+            bouncyBall.isLaunched = false;
+            bouncyBall.rb.isKinematic = true;  // Asegura que la pelota esté lista para ser lanzada.
+            bouncyBall.rb.velocity = Vector2.zero;  // Reinicia la velocidad.
+            bouncyBall.transform.position = bouncyBall.paddle.transform.position;  // Coloca la pelota sobre la paleta.
+        }
     }
 
     public void LevelCompleted()
     {
+        if (victoryPanel != null)
+        {
+            victoryPanel.SetActive(false);
+        }
 
         blockHitsRequired++;
         ClearLevel();
@@ -57,7 +76,7 @@ public class LevelGenerator : MonoBehaviour
     {
         foreach (Transform child in transform)
         {
-            Destroy(child.gameObject); // Eliminar todos los bloques del nivel actual
+            Destroy(child.gameObject);
         }
     }
 

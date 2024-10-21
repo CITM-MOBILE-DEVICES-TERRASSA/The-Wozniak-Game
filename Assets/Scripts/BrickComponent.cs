@@ -18,7 +18,6 @@ public class BlockComponent : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ball"))
         {
-            // Obtener el componente BouncyBall de la pelota
             BouncyBall bouncyBall = collision.gameObject.GetComponent<BouncyBall>();
 
             if (bouncyBall != null)
@@ -30,10 +29,8 @@ public class BlockComponent : MonoBehaviour
 
                 if (currentHits >= hitsToBreak)
                 {
-                    // Obtener la puntuación acumulada del componente BouncyBall
                     int scoreToDisplay = bouncyBall.hasHitPaddleOrLost ? bouncyBall.baseScore : bouncyBall.additionalScoreAccumulated;
 
-                    // Mostrar el texto de la puntuación sobre el bloque destruido
                     ShowScoreText(scoreToDisplay);
 
                     Debug.Log($"Bloque {gameObject.name} destruido después de {currentHits} golpes.");
@@ -60,6 +57,8 @@ public class BlockComponent : MonoBehaviour
         if (scoreTextPrefab == null)
         {
             Debug.LogWarning("El prefab de texto de puntuación no está asignado.");
+            
+
         }
         else
         {
@@ -95,7 +94,7 @@ public class BlockComponent : MonoBehaviour
 
         Debug.Log("Iniciando fade out para: " + textObject.name);
 
-        yield return new WaitForSeconds(0.5f); // Esperar medio segundo
+        yield return new WaitForSeconds(0.5f);
 
         float fadeDuration = 1f;
         float elapsed = 0f;
