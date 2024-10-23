@@ -762,6 +762,7 @@ MonoBehaviour:
   maxVelocity: 10
   launchForce: 10
   isLaunched: 0
+  isKinematic: 1
   constrainInsideScreen: 0
   score: 0
   lives: 3

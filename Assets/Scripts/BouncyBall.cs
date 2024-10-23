@@ -114,9 +114,12 @@ public class BouncyBall : MonoBehaviour
         if (GameObject.FindGameObjectsWithTag("Brick").Length == 0)
         {
             audioManager.PlaySound(AudioManager.SoundType.GameOver);
-            ResetBall();
             youWinPanel.SetActive(true);
-            Time.timeScale = 0;
+            //Time.timeScale = 0;
+
+            // Reiniciar la bola y lanzar
+            ResetBall(); // Reiniciar la bola a su posición inicial
+           // LaunchBall(); // Llamar a la función que lanza la bola
         }
     }
 
@@ -161,7 +164,6 @@ public class BouncyBall : MonoBehaviour
 
             hasHitPaddleOrLost = false;
             scoreTxt.text = score.ToString("00000");
-            blockComponent.ShowScoreText(puntosBloque);
 
             if (score > maxScore)
             {

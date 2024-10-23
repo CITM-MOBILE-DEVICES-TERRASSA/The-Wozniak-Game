@@ -46,15 +46,6 @@ public class LevelGenerator : MonoBehaviour
                 }
             }
         }
-
-        BouncyBall bouncyBall = FindObjectOfType<BouncyBall>();
-        if (bouncyBall != null)
-        {
-            bouncyBall.isLaunched = false;
-            bouncyBall.rb.isKinematic = true;  // Asegura que la pelota esté lista para ser lanzada.
-            bouncyBall.rb.velocity = Vector2.zero;  // Reinicia la velocidad.
-            bouncyBall.transform.position = bouncyBall.paddle.transform.position;  // Coloca la pelota sobre la paleta.
-        }
     }
 
     public void LevelCompleted()

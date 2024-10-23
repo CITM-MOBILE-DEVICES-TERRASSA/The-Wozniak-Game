@@ -44,13 +44,14 @@ public class PowerUp : MonoBehaviour
                 RegenerateLife();
                 break;
             case PowerUpType.LargerPaddle:
+                // Si el paddle ya está alargado, solo sumamos tiempo, si no, comenzamos la corrutina
                 if (!isPaddleLarge)
                 {
                     StartCoroutine(EnlargePaddle());
                 }
                 else
                 {
-                    enlargeRemainingTime += powerUpDuration;
+                    enlargeRemainingTime += powerUpDuration;  // Sumar tiempo si ya está grande
                 }
                 break;
             case PowerUpType.FasterBall:
@@ -58,7 +59,7 @@ public class PowerUp : MonoBehaviour
                 break;
         }
 
-        Destroy(gameObject);
+        Destroy(gameObject); // Destruimos el power-up cuando se activa
     }
 
     void RegenerateLife()
@@ -73,25 +74,35 @@ public class PowerUp : MonoBehaviour
 
     IEnumerator EnlargePaddle()
     {
+        // Si ya está alargado, simplemente sumamos tiempo y salimos
+        if (isPaddleLarge)
+        {
+            enlargeRemainingTime += powerUpDuration;
+            yield break;
+        }
+
+        // Establecemos el estado del paddle como alargado y guardamos el tiempo restante
         isPaddleLarge = true;
         enlargeRemainingTime = powerUpDuration;
 
+        // Guardamos el tamaño original del paddle
         Vector3 originalScale = paddle.transform.localScale;
 
-        if (isPaddleLarge)
-        {
-            paddle.transform.localScale = new Vector3(originalScale.x + 2, originalScale.y, originalScale.z);
-        }
+        // Alargamos el paddle
+        paddle.transform.localScale = new Vector3(originalScale.x + 2, originalScale.y, originalScale.z);
 
+        // Temporizador de duración del power-up
         while (enlargeRemainingTime > 0)
         {
             enlargeRemainingTime -= Time.deltaTime;
             yield return null;
         }
 
+        // Una vez el tiempo se agote, volvemos al tamaño original
         paddle.transform.localScale = originalScale;
         isPaddleLarge = false;
     }
+
 
     void SpeedUpBall()
     {
