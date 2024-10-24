@@ -56,6 +56,7 @@ public class BouncyBall : MonoBehaviour
 
     void Update()
     {
+        rb = GetComponent<Rigidbody2D>();
         if (constrainInsideScreen)
         {
             Vector3 position = transform.position;
@@ -102,6 +103,9 @@ public class BouncyBall : MonoBehaviour
                 else
                 {
                     ResetBall();
+                    PlayerPrefs.SetInt("Vidas", lives);
+                    PlayerPrefs.Save();
+                    Debug.Log("Vidas guardadas en PlayerPrefs: " + lives);
                 }
             }
         }
@@ -115,19 +119,18 @@ public class BouncyBall : MonoBehaviour
         {
             audioManager.PlaySound(AudioManager.SoundType.GameOver);
             youWinPanel.SetActive(true);
-            //Time.timeScale = 0;
 
-            // Reiniciar la bola y lanzar
-            ResetBall(); // Reiniciar la bola a su posición inicial
-           // LaunchBall(); // Llamar a la función que lanza la bola
+            ResetBall();
         }
     }
 
     public void LaunchBall()
     {
+        Debug.Log("Lanzando la pelota...");
         rb.isKinematic = false;
         rb.AddForce(Vector2.up * launchForce, ForceMode2D.Impulse);
         isLaunched = true;
+        Debug.Log("isKinematic: " + rb.isKinematic + ", isLaunched: " + isLaunched);    
     }
 
     public void ResetBall()

@@ -26,6 +26,10 @@ public class PowerUp : MonoBehaviour
     void Update()
     {
         transform.position += Vector3.down * fallSpeed * Time.deltaTime;
+        if (transform.position.y < -5.5f)
+        {
+            Destroy(gameObject);  // Elimina el power-up
+        }
     }
 
     void OnTriggerEnter2D(Collider2D other)

@@ -12,6 +12,10 @@ public class BlockComponent : MonoBehaviour
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        if (hitsToBreak >= 6)
+        {
+            hitsToBreak = 1;
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
