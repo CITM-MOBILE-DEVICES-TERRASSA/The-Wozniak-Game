@@ -94,7 +94,7 @@ public class PauseManager : MonoBehaviour
     public void ExitToMainMenu()
     {
         LevelGenerator levelGenerator = FindObjectOfType<LevelGenerator>();
-
+        Time.timeScale = 1;
         SceneManager.LoadScene("Main Menu");
         levelGenerator.DestroyAllPowerUps();
     }
