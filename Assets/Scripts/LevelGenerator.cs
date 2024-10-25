@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static UnityEngine.Rendering.VirtualTexturing.Debugging;
 
 public class LevelGenerator : MonoBehaviour
 {
@@ -11,81 +12,47 @@ public class LevelGenerator : MonoBehaviour
     public Gradient gradient;
     private List<GameObject> activePowerUps = new List<GameObject>();
     public GameObject[] powerUpPrefabs;
-
+    private PowerUp powerUp;
     public GameObject victoryPanel;
-
+    private PlayerMovement paddle;
     public int blockHitsRequired = 1;
 
     private void Start()
     {
+        paddle = GameObject.FindObjectOfType<PlayerMovement>();
         StartCoroutine(RestoreGameState());
         GenerateLevel();
     }
 
     private IEnumerator RestoreGameState()
     {
-        Debug.Log("Corutina 'RestoreGameState' iniciada.");
-
-        yield return null; // Espera un frame
+        yield return null;
 
         int vidasGuardadas = PlayerPrefs.GetInt("Vidas", 3);
-        Debug.Log("Vidas guardadas: " + vidasGuardadas);
-
         BouncyBall ball = FindObjectOfType<BouncyBall>();
         if (ball != null)
         {
             ball.lives = vidasGuardadas;
-            Debug.Log("Vidas asignadas a la bola: " + ball.lives);
-
-            // Actualizar las vidas visualmente
             for (int i = 0; i < ball.livesImage.Length; i++)
             {
                 ball.livesImage[i].SetActive(i < ball.lives);
             }
-        }
-        else
-        {
-            Debug.LogError("No se encontró el objeto BouncyBall.");
-        }
 
-        // 2. Restaurar el puntaje actual
-        int scoreGuardado = PlayerPrefs.GetInt("ActualScore", 0); // Valor por defecto es 0
-        Debug.Log("Puntaje actual guardado: " + scoreGuardado);
-
-        if (ball != null)
-        {
+            int scoreGuardado = PlayerPrefs.GetInt("ActualScore", 0);
             ball.score = scoreGuardado;
             ball.scoreTxt.text = ball.score.ToString("00000");
-            Debug.Log("Puntaje actual asignado a la bola: " + ball.score);
-        }
 
-        // 3. Restaurar el puntaje máximo
-        int maxScoreGuardado = PlayerPrefs.GetInt("00000", 0); // Valor por defecto es 0
-        Debug.Log("Puntaje máximo guardado: " + maxScoreGuardado);
-
-        if (ball != null)
-        {
+            int maxScoreGuardado = PlayerPrefs.GetInt("00000", 0);
             ball.maxScore = maxScoreGuardado;
             ball.maxScoreTxt.text = ball.maxScore.ToString("00000");
-            Debug.Log("Puntaje máximo asignado a la bola: " + ball.maxScore);
         }
 
-        // 4. Restaurar los golpes necesarios para los bloques
-        int golpesGuardados = PlayerPrefs.GetInt("BlockHits", 1); // Valor por defecto es 1
-        Debug.Log("Golpes necesarios guardados: " + golpesGuardados);
-
+        int golpesGuardados = PlayerPrefs.GetInt("BlockHits", 1);
         LevelGenerator levelGenerator = FindObjectOfType<LevelGenerator>();
         if (levelGenerator != null)
         {
             levelGenerator.blockHitsRequired = golpesGuardados;
-            Debug.Log("Golpes necesarios asignados al generador: " + levelGenerator.blockHitsRequired);
-
-            levelGenerator.GenerateLevel(); // Regenerar el nivel con los nuevos golpes necesarios
-            Debug.Log("Nivel regenerado con " + levelGenerator.blockHitsRequired + " golpes necesarios.");
-        }
-        else
-        {
-            Debug.LogError("No se encontró el objeto LevelGenerator.");
+            levelGenerator.GenerateLevel();
         }
     }
 
@@ -101,10 +68,6 @@ public class LevelGenerator : MonoBehaviour
 
                 BlockComponent blockComponent = newBrick.AddComponent<BlockComponent>();
                 blockComponent.hitsToBreak = blockHitsRequired;
-                
-
-
-                Debug.Log($"Bloque creado en {i}, {j} con {blockHitsRequired} golpes requeridos.");
 
                 float randomChance = Random.Range(0f, 1f);
                 if (randomChance <= 0.2f && powerUpPrefabs.Length > 0)
@@ -115,6 +78,7 @@ public class LevelGenerator : MonoBehaviour
             }
         }
 
+        paddle.transform.localScale = new Vector3(1.4f, 0.2f, 1f);
         PlayerPrefs.SetInt("BlockHits", blockHitsRequired);
         PlayerPrefs.Save();
     }
@@ -128,7 +92,6 @@ public class LevelGenerator : MonoBehaviour
 
         blockHitsRequired++;
         ClearLevel();
-
         DestroyAllPowerUps();
 
         PlayerPrefs.SetInt("BlockHits", blockHitsRequired);
@@ -174,6 +137,5 @@ public class LevelGenerator : MonoBehaviour
         {
             Destroy(powerUp);
         }
-        Debug.Log("Todos los Power-ups han sido destruidos.");  
     }
 }

@@ -148,6 +148,7 @@ public class BouncyBall : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Brick"))
         {
+            audioManager.PlaySound(AudioManager.SoundType.HitBrick);
             wallBounceCount = 0;
             int puntosBloque = hasHitPaddleOrLost ? baseScore : additionalScoreAccumulated;
             BlockComponent blockComponent = collision.gameObject.GetComponent<BlockComponent>();
@@ -178,11 +179,13 @@ public class BouncyBall : MonoBehaviour
         }
         else if (collision.gameObject.CompareTag("Paddle"))
         {
+            audioManager.PlaySound(AudioManager.SoundType.HitPaddle);
             wallBounceCount = 0;
             hasHitPaddleOrLost = true;
         }
         else if (collision.gameObject.CompareTag("Wall"))
         {
+            audioManager.PlaySound(AudioManager.SoundType.HitPaddle);
             wallBounceCount++;
 
             if (wallBounceCount >= maxWallBounces)

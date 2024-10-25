@@ -52,7 +52,6 @@ public class PauseManager : MonoBehaviour
         if (playerMovement != null)
         {
             playerMovement.ToggleAutomaticGameplay();
-            Debug.Log("Automatic gameplay toggled: ");
         }
     }
 

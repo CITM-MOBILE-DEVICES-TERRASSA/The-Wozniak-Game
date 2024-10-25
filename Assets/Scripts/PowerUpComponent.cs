@@ -11,8 +11,6 @@ public class PowerUpComponent : MonoBehaviour
         if (isLevelResetting)
             return;
 
-        Debug.Log(gameObject.name + " ha sido destruido.");
-
         if (powerUpPrefab != null && !isLevelResetting)
         {
             GameObject powerUp = Instantiate(powerUpPrefab, transform.position, Quaternion.identity);

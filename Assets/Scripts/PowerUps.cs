@@ -14,8 +14,7 @@ public class PowerUp : MonoBehaviour
     private BouncyBall ball;
     public LayerMask ballLayer;
 
-    private bool isPaddleLarge = false;
-    private float enlargeRemainingTime = 0f;
+    public bool isPaddleLarge = false;
 
     void Start()
     {
@@ -48,15 +47,8 @@ public class PowerUp : MonoBehaviour
                 RegenerateLife();
                 break;
             case PowerUpType.LargerPaddle:
-                // Si el paddle ya está alargado, solo sumamos tiempo, si no, comenzamos la corrutina
-                if (!isPaddleLarge)
-                {
-                    StartCoroutine(EnlargePaddle());
-                }
-                else
-                {
-                    enlargeRemainingTime += powerUpDuration;  // Sumar tiempo si ya está grande
-                }
+
+                LargerPaddle();
                 break;
             case PowerUpType.FasterBall:
                 SpeedUpBall();
@@ -76,35 +68,16 @@ public class PowerUp : MonoBehaviour
         }
     }
 
-    IEnumerator EnlargePaddle()
+    void LargerPaddle()
     {
-        // Si ya está alargado, simplemente sumamos tiempo y salimos
-        if (isPaddleLarge)
+        if (!isPaddleLarge)
         {
-            enlargeRemainingTime += powerUpDuration;
-            yield break;
+            isPaddleLarge = true;
+            Debug.Log("paddle== "+ isPaddleLarge);
+            Vector3 originalScale = paddle.transform.localScale;
+
+            paddle.transform.localScale = new Vector3(originalScale.x + 1, originalScale.y, originalScale.z);
         }
-
-        // Establecemos el estado del paddle como alargado y guardamos el tiempo restante
-        isPaddleLarge = true;
-        enlargeRemainingTime = powerUpDuration;
-
-        // Guardamos el tamaño original del paddle
-        Vector3 originalScale = paddle.transform.localScale;
-
-        // Alargamos el paddle
-        paddle.transform.localScale = new Vector3(originalScale.x + 2, originalScale.y, originalScale.z);
-
-        // Temporizador de duración del power-up
-        while (enlargeRemainingTime > 0)
-        {
-            enlargeRemainingTime -= Time.deltaTime;
-            yield return null;
-        }
-
-        // Una vez el tiempo se agote, volvemos al tamaño original
-        paddle.transform.localScale = originalScale;
-        isPaddleLarge = false;
     }
 
 
