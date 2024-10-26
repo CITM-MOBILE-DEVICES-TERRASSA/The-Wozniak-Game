@@ -4038,7 +4038,8 @@ MonoBehaviour:
   sfxVolumeSlider: {fileID: 336765683}
   musicSources:
   - {fileID: 866614951}
-  sfxSources: []
+  sfxSources:
+  - {fileID: 1915784485}
 --- !u!1 &1452808063
 GameObject:
   m_ObjectHideFlags: 0
@@ -5009,8 +5010,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSource: {fileID: 1915784485}
   soundClips:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 8300000, guid: 03bc8583c9b243b49bb1381daecb10b6, type: 3}
+  - {fileID: 8300000, guid: 83fa952364202e94797f65b6846bc0aa, type: 3}
   - {fileID: 8300000, guid: 6dfb5475b8a827e42946e5174dbf01b1, type: 3}
 --- !u!82 &1915784485
 AudioSource:
